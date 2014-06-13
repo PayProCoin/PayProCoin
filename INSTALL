@@ -1,0 +1,9 @@
+Building PayProCoin
+
+See doc/readme-qt.rst for instructions on building PayProCoin-Qt,
+the intended-for-end-users, nice-graphical-interface, reference
+implementation of PayProCoin.
+
+See doc/build-*.txt for instructions on building payprocoind,
+the intended-for-services, no-graphical-interface, reference
+implementation of PayProCoin.
