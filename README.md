@@ -1,27 +1,26 @@
-PayProCoin integration/staging tree
-===================================
+PayProCoin Core integration/staging tree
+=====================================
 
-http://www.payprocoin.com
+http://www.payprocoin.org
 
-Copyright (c) 2009-2013 Bitcoin Developers
-Copyright (c) 2014 PayProCoin Developers
+Copyright (c) 2009-2014 PayProCoin Core Developers
 
-What is Bitcoin?
+What is PayProCoin?
 ----------------
 
-Bitcoin is an experimental new digital currency that enables instant payments to
-anyone, anywhere in the world. Bitcoin uses peer-to-peer technology to operate
+PayProCoin is an experimental new digital currency that enables instant payments to
+anyone, anywhere in the world. PayProCoin uses peer-to-peer technology to operate
 with no central authority: managing transactions and issuing money are carried
-out collectively by the network. Bitcoin is also the name of the open source
+out collectively by the network. PayProCoin Core is the name of open source
 software which enables the use of this currency.
 
 For more information, as well as an immediately useable, binary version of
-the Bitcoin client software, see http://www.bitcoin.org.
+the PayProCoin Core software, see http://www.payprocoin.org/en/download.
 
 License
 -------
 
-Bitcoin is released under the terms of the MIT license. See `COPYING` for more
+PayProCoin Core is released under the terms of the MIT license. See [COPYING](COPYING) for more
 information or see http://opensource.org/licenses/MIT.
 
 Development process
@@ -30,21 +29,21 @@ Development process
 Developers work in their own trees, then submit pull requests when they think
 their feature or bug fix is ready.
 
-If it is a simple/trivial/non-controversial change, then one of the Bitcoin
+If it is a simple/trivial/non-controversial change, then one of the PayProCoin
 development team members simply pulls it.
 
 If it is a *more complicated or potentially controversial* change, then the patch
 submitter will be asked to start a discussion (if they haven't already) on the
-[mailing list](http://sourceforge.net/mailarchive/forum.php?forum_name=bitcoin-development).
+[mailing list](http://sourceforge.net/mailarchive/forum.php?forum_name=payprocoin-development).
 
 The patch will be accepted if there is broad consensus that it is a good thing.
 Developers should expect to rework and resubmit patches if the code doesn't
-match the project's coding conventions (see `doc/coding.md`) or are
+match the project's coding conventions (see [doc/coding.md](doc/coding.md)) or are
 controversial.
 
 The `master` branch is regularly built and tested, but is not guaranteed to be
-completely stable. [Tags](https://github.com/bitcoin/bitcoin/tags) are created
-regularly to indicate new official, stable release versions of Bitcoin.
+completely stable. [Tags](https://github.com/payprocoin/payprocoin/tags) are created
+regularly to indicate new official, stable release versions of PayProCoin.
 
 Testing
 -------
@@ -57,27 +56,63 @@ lots of money.
 ### Automated Testing
 
 Developers are strongly encouraged to write unit tests for new code, and to
-submit new unit tests for old code.
-
-Unit tests for the core code are in `src/test/`. To compile and run them:
-
-    cd src; make -f makefile.unix test
-
-Unit tests for the GUI code are in `src/qt/test/`. To compile and run them:
-
-    qmake BITCOIN_QT_TEST=1 -o Makefile.test bitcoin-qt.pro
-    make -f Makefile.test
-    ./bitcoin-qt_test
+submit new unit tests for old code. Unit tests can be compiled and run (assuming they weren't disabled in configure) with: `make check`
 
 Every pull request is built for both Windows and Linux on a dedicated server,
 and unit and sanity tests are automatically run. The binaries produced may be
 used for manual QA testing — a link to them will appear in a comment on the
-pull request posted by [BitcoinPullTester](https://github.com/BitcoinPullTester). See https://github.com/TheBlueMatt/test-scripts
+pull request posted by [PayProCoinPullTester](https://github.com/PayProCoinPullTester). See https://github.com/TheBlueMatt/test-scripts
 for the build/test scripts.
 
 ### Manual Quality Assurance (QA) Testing
 
 Large changes should have a test plan, and should be tested by somebody other
 than the developer who wrote the code.
+See https://github.com/payprocoin/QA/ for how to create a test plan.
 
-See https://github.com/bitcoin/QA/ for how to create a test plan.
+Translations
+------------
+
+Changes to translations as well as new translations can be submitted to
+[PayProCoin Core's Transifex page](https://www.transifex.com/projects/p/payprocoin/).
+
+Periodically the translations are pulled from Transifex and merged into the git repository. See the
+[translation process](doc/translation_process.md) for details on how this works.
+
+**Important**: We do not accept translation changes as github pull request because the next
+pull from Transifex would automatically overwrite them again.
+
+Development tips and tricks
+---------------------------
+
+**compiling for debugging**
+
+Run configure with the --enable-debug option, then make. Or run configure with
+CXXFLAGS="-g -ggdb -O0" or whatever debug flags you need.
+
+**debug.log**
+
+If the code is behaving strangely, take a look in the debug.log file in the data directory;
+error and debugging message are written there.
+
+The -debug=... command-line option controls debugging; running with just -debug will turn
+on all categories (and give you a very large debug.log file).
+
+The Qt code routes qDebug() output to debug.log under category "qt": run with -debug=qt
+to see it.
+
+**testnet and regtest modes**
+
+Run with the -testnet option to run with "play payprocoins" on the test network, if you
+are testing multi-machine code that needs to operate across the internet.
+
+If you are testing something that can run on one machine, run with the -regtest option.
+In regression test mode blocks can be created on-demand; see qa/rpc-tests/ for tests
+that run in -regest mode.
+
+**DEBUG_LOCKORDER**
+
+PayProCoin Core is a multithreaded application, and deadlocks or other multithreading bugs
+can be very difficult to track down. Compiling with -DDEBUG_LOCKORDER (configure
+CXXFLAGS="-DDEBUG_LOCKORDER -g") inserts run-time checks to keep track of what locks
+are held, and adds warning to the debug.log file if inconsistencies are detected.
