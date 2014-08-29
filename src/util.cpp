@@ -11,6 +11,10 @@
 #include "ui_interface.h"
 #include "uint256.h"
 #include "version.h"
+#include "ui_interface.h"
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/case_conv.hpp> // for to_lower()
+#include <boost/algorithm/string/predicate.hpp> // for startswith() and endswith()
 
 #include <stdarg.h>
 
@@ -305,7 +309,86 @@ int LogPrintStr(const std::string &str)
     return ret;
 }
 
+string vstrprintf(const char *format, va_list ap)
+{
+    char buffer[50000];
+    char* p = buffer;
+    int limit = sizeof(buffer);
+    int ret;
+    while(true)
+    {
+        va_list arg_ptr;
+        va_copy(arg_ptr, ap);
+#ifdef WIN32
+        ret = _vsnprintf(p, limit, format, arg_ptr);
+#else
+        ret = vsnprintf(p, limit, format, arg_ptr);
+#endif
+        va_end(arg_ptr);
+        if (ret >= 0 && ret < limit)
+            break;
+        if (p != buffer)
+            delete[] p;
+        limit *= 2;
+        p = new char[limit];
+        if (p == NULL)
+            throw std::bad_alloc();
+    }
+    string str(p, p+ret);
+    if (p != buffer)
+        delete[] p;
+    return str;
+}
+
+string real_strprintf(const char *format, int dummy, ...)
+{
+    va_list arg_ptr;
+    va_start(arg_ptr, dummy);
+    string str = vstrprintf(format, arg_ptr);
+    va_end(arg_ptr);
+    return str;
+}
+
+string real_strprintf(const std::string &format, int dummy, ...)
+{
+    va_list arg_ptr;
+    va_start(arg_ptr, dummy);
+    string str = vstrprintf(format.c_str(), arg_ptr);
+    va_end(arg_ptr);
+    return str;
+}
+
+bool error(const char *format, ...)
+{
+    va_list arg_ptr;
+    va_start(arg_ptr, format);
+    std::string str = vstrprintf(format, arg_ptr);
+    va_end(arg_ptr);
+    printf("ERROR: %s\n", str.c_str());
+    return false;
+}
+
+void ParseString(const string& str, char c, vector<string>& v)
+{
+    if (str.empty())
+        return;
+    string::size_type i1 = 0;
+    string::size_type i2;
+    while(true)
+    {
+        i2 = str.find(c, i1);
+        if (i2 == str.npos)
+        {
+            v.push_back(str.substr(i1));
+            return;
+        }
+        v.push_back(str.substr(i1, i2-i1));
+        i1 = i2+1;
+    }
+}
+
 string FormatMoney(int64_t n, bool fPlus)
+
 {
     // Note: not using straight sprintf here because we do NOT want
     // localized number formatting.

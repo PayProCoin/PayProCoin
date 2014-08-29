@@ -10,7 +10,7 @@
 // Name of client reported in the 'version' message. Report the same name
 // for both payprocoind and payprocoin-qt, to make it harder for attackers to
 // target servers or GUI users specifically.
-const std::string CLIENT_NAME("PayProCoin v9.2.1");
+const std::string CLIENT_NAME("PayProCoin");
 
 // Client version number
 #define CLIENT_VERSION_SUFFIX   ""
@@ -39,7 +39,7 @@ const std::string CLIENT_NAME("PayProCoin v9.2.1");
 #define GIT_ARCHIVE 1
 #ifdef GIT_ARCHIVE
 #    define GIT_COMMIT_ID ""
-#    define GIT_COMMIT_DATE "Tue, 15 Jul 2014 23:59:59 GMT"
+#    define GIT_COMMIT_DATE "Sat, 28 Aug 2014 23:59:59 GMT"
 #endif
 
 #define BUILD_DESC_WITH_SUFFIX(maj,min,rev,build,suffix) \
